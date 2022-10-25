@@ -1,3 +1,4 @@
+import { userSchema, validateSchema } from '../middleware';
 import {
   getUserById,
   createUser,
@@ -11,10 +12,10 @@ const express = require('express');
 export const router = express.Router();
 
 router.get('/:id', getUserById);
-router.get('', getAllUsers);
-router.get('/', getSuggestUsers);
+router.get('', getSuggestUsers);
 
-router.post('', createUser);
-router.put('/:id', updateUser);
+router.get('/all', getAllUsers);
+
+router.post('', validateSchema(userSchema), createUser);
+router.put('/:id', validateSchema(userSchema), updateUser);
 router.delete('/:id', deleteUser);
-
