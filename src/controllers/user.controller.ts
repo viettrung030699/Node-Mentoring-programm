@@ -2,94 +2,185 @@ import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import { Request, Response } from 'express';
 
 import { User } from '../models';
+import { Op } from 'sequelize';
 
-const users: User[] = [
-  { id: '1', login: 'user1', password: 'user123', age: 19, isDeleted: false },
-  { id: '3', login: 'user3', password: 'user123', age: 22, isDeleted: false },
-  { id: '2', login: 'user2', password: 'user123', age: 18, isDeleted: false },
-  { id: '4', login: 'user4', password: 'user123', age: 23, isDeleted: false },
-  { id: '5', login: 'trung', password: 'user123', age: 23, isDeleted: true },
-];
+interface User {
+  id: string;
+  login: string;
+  password: string;
+  age: number;
+  isDeleted: boolean;
+}
 
-const findUserIndexByID = (id: string) => {
-  return users.findIndex((user) => {
-    return user.id === id;
-  });
-};
+export const getUserById = async (req: Request, res: Response) => {
+  console.log('Called GetUserbyID');
 
-export const getUserById = (req: Request, res: Response) => {
-  const user = users.find((user) => user.id === req.params.id);
+  try {
+    const user: User = await User.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
 
-  if (!user) {
-    return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
-  }
-
-  res.status(StatusCodes.OK).send(user);
-};
-
-export const getAllUsers = (req: Request, res: Response) => {
-  if (!users) {
-    return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
-  }
-
-  res.status(StatusCodes.OK).json({ users: users });
-};
-
-export const createUser = (req: Request, res: Response) => {
-  const { id } = req.body;
-  if (!id) {
-    return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
-  }
-  const newUser = { ...req.body };
-  users.push(newUser);
-  res.status(StatusCodes.OK).send({ message: 'Create Successed' });
-};
-
-export const updateUser = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const userIndex = findUserIndexByID(id);
-
-  if (userIndex === -1) {
-    return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
-  }
-
-  users[userIndex] = req.body;
-
-  res
-    .status(StatusCodes.OK)
-    .json({ user: users, message: `Update successed user: ${id}` });
-};
-
-export const deleteUser = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const userIndex = findUserIndexByID(id);
-
-  if (userIndex === -1) {
-    res
-      .status(StatusCodes.BAD_REQUEST)
-      .send({ message: `Invalid userId ${id}` });
-  }
-
-  users[userIndex].isDeleted !== true
-    ? (users[userIndex].isDeleted = true)
-    : res
+    if (!user) {
+      return res
         .status(StatusCodes.BAD_REQUEST)
-        .send({ message: `Deleted userId ${id}` });
+        .send(ReasonPhrases.BAD_REQUEST);
+    }
 
-  res
-    .status(StatusCodes.OK)
-    .send({ users: users[userIndex], message: `User ${id} is deleted` });
+    res.status(StatusCodes.OK).send(user);
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
 };
 
-export const getSuggestUsers = (req: Request, res: Response) => {
-  let { loginSubstring = '', limit = 4 } = req.query;
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    // const users = await User.findAll({
+    //   limit: 3,
+    // });
+    const users = await User.findAll();
+    console.log(users);
 
-  const list = users
-    .filter((user) => {
-      return user.login.includes(loginSubstring.toString()) && !user.isDeleted;
+    // if (!users) {
+    //   return res
+    //     .status(StatusCodes.BAD_REQUEST)
+    //     .send(ReasonPhrases.BAD_REQUEST);
+    // }
+    res.status(StatusCodes.OK).send({ users: users });
+  } catch (error: unknown) {
+    console.error(error);
+
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
+};
+
+export const createUser = async (req: Request, res: Response) => {
+  try {
+    const { id, login, password, age, isDeleted } = req.body;
+
+    const oldUser: User = await User.findOne({ where: { id } });
+
+    if (oldUser) {
+      res.status(StatusCodes.BAD_REQUEST).send('User Exist!');
+    }
+
+    const newUser: User = await User.create({
+      id,
+      login,
+      password,
+      age,
+      isDeleted,
+    });
+
+    if (!newUser) {
+      res.status(StatusCodes.BAD_REQUEST).send('Unable to create new User');
+    }
+
+    res.status(StatusCodes.OK).send({
+      message: `Create Successed ${newUser.id} - ${newUser.login}`,
+    });
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { login, password, age, isDeleted } = req.body;
+
+    await User.update(
+      { login, password, age, isDeleted },
+      { where: { id: id } },
+    )
+      .then((success: number) => {
+        return success
+          ? res
+              .status(StatusCodes.OK)
+              .send({ message: `User${id} updated successfully!` })
+          : res
+              .status(StatusCodes.BAD_REQUEST)
+              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
+      })
+      .catch((error: any) => {
+        throw new Error(error.message);
+      });
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await User.destroy({ where: { id, isDeleted: false } }).then(
+      (success: number) => {
+        return success
+          ? res
+              .status(StatusCodes.OK)
+              .send({ message: `User${id} deleted successfully!` })
+          : res
+              .status(StatusCodes.BAD_REQUEST)
+              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
+      },
+    );
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
+};
+
+export const getSuggestUsers = async (req: Request, res: Response) => {
+  try {
+    let { loginSubstring = '', limit = 4 } = req.query;
+
+    const users: string = await User.findAll({
+      limit,
+      where: {
+        login: {
+          [Op.substring]: loginSubstring,
+        },
+      },
     })
-    .sort((user1, user2) => user1.login.localeCompare(user2.login))
-    .slice(0, +limit);
+      .then((res: JSON) => JSON.stringify(res, null, 2))
+      .catch((err: unknown) => console.error('Unable to get User', err));
 
-  res.status(StatusCodes.OK).send({ list });
+    const suggestUsers: User[] = JSON.parse(users)
+      .filter(
+        (user: User) =>
+          user.login.includes(loginSubstring.toString()) && !user.isDeleted,
+      )
+      .sort((user1: User, user2: User) =>
+        user1.login.localeCompare(user2.login),
+      )
+      .slice(0, +limit);
+
+    return res.status(StatusCodes.OK).send({ suggestUsers: suggestUsers });
+  } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
 };

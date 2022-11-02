@@ -1,7 +1,8 @@
-export interface User {
-  id: string,
-  login: string,
-  password: string,
-  age: number,
-  isDeleted: boolean,
-}
+import { users } from './user';
+import { sequelize } from '../middleware/dbConnector';
+
+export const User = sequelize.define('users', users, {
+  timestamps: false,
+});
+
+User.sync();
