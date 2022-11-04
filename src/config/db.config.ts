@@ -1,7 +1,7 @@
 module.exports = {
   DB: 'HW3',
   USER: 'postgres',
-  PASSWORD: 'Trung030699@@',
+  PASSWORD: 'trung123',
   host: 'localhost',
   port: '5432',
   dialect: 'postgres',
