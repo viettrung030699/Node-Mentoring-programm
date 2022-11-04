@@ -40,17 +40,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    // const users = await User.findAll({
-    //   limit: 3,
-    // });
     const users = await User.findAll();
-    console.log(users);
-
-    // if (!users) {
-    //   return res
-    //     .status(StatusCodes.BAD_REQUEST)
-    //     .send(ReasonPhrases.BAD_REQUEST);
-    // }
     res.status(StatusCodes.OK).send({ users: users });
   } catch (error: unknown) {
     console.error(error);
