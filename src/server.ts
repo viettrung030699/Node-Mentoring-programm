@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-import { router } from './routes';
+import { userRouter } from './routes';
 
 dotenv.config();
 
@@ -12,7 +12,8 @@ try {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
-  app.use('/users', router);
+  app.use('/users', userRouter);
+  app.use('/groups', )
 
   app.get('/', (req: Request, res: Response) => {
     res.send('Express + TypeScript Server');

@@ -9,13 +9,13 @@ import {
 } from '../controllers';
 
 const express = require('express');
-export const router = express.Router();
+export const userRouter = express.Router();
 
-router.get('/:id', getUserById);
-router.get('', getSuggestUsers);
+userRouter.get('/:id', getUserById);
+userRouter.get('', getSuggestUsers);
 
-router.get('/all', getAllUsers);
+userRouter.get('/all', getAllUsers);
 
-router.post('', validateSchema(userSchema), createUser);
-router.put('/:id', validateSchema(userSchema), updateUser);
-router.delete('/:id', deleteUser);
+userRouter.post('', validateSchema(userSchema), createUser);
+userRouter.put('/:id', validateSchema(userSchema), updateUser);
+userRouter.delete('/:id', deleteUser);

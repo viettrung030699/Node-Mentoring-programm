@@ -13,8 +13,6 @@ interface User {
 }
 
 export const getUserById = async (req: Request, res: Response) => {
-  console.log('Called GetUserbyID');
-
   try {
     const user: User = await User.findOne({
       where: {

@@ -1,13 +1,5 @@
 const Sequelize = require('sequelize');
 
-// enum PERMISSION {
-//   READ = 'READ',
-//   WRITE = 'WRITE',
-//   DELETE = 'DELETE',
-//   SHARE = 'SHARE',
-//   UPLOAD_FILES = 'UPLOAD_FILES'
-// }
-
 enum PERMISSION {
   READ = 1,
   WRITE,
