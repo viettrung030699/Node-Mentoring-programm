@@ -55,9 +55,9 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const { id, login, password, age, isDeleted } = req.body;
 
-    const oldUser: User = await User.findOne({ where: { id } });
+    const availableUser: User = await User.findOne({ where: { id } });
 
-    if (oldUser) {
+    if (availableUser) {
       res.status(StatusCodes.BAD_REQUEST).send('User Exist!');
     }
 

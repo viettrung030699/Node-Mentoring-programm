@@ -1,4 +1,10 @@
-import { getAllGroups, getGroupById } from "../controllers/group.controller";
+import {
+  getAllGroups,
+  getGroupById,
+  createGroup,
+  updateGroupById,
+  deleteGroupById,
+} from '../controllers/group.controller';
 
 const express = require('express');
 
