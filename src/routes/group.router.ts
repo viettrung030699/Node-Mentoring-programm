@@ -4,6 +4,7 @@ import {
   createGroup,
   updateGroupById,
   deleteGroupById,
+  addUsersToGroup,
 } from '../controllers/group.controller';
 
 const express = require('express');
@@ -15,6 +16,8 @@ groupRouter.get('/:id', getGroupById);
 groupRouter.get('', getAllGroups);
 
 groupRouter.post('', createGroup);
+
+groupRouter.post('/addUsersToGroup', addUsersToGroup);
 
 groupRouter.put('/:id', updateGroupById);
 

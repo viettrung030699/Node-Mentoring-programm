@@ -1,6 +1,9 @@
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import { Request, Response } from 'express';
-import { Group } from '../models';
+import { Group, User } from '../models';
+import { UserGroup } from '../models/userGroup.model';
+import { sequelize } from '../middleware/dbConnector';
+// import { UserGroup } from '../models/userGroup.model';
 
 enum Permission {
   READ,
@@ -106,18 +109,48 @@ export const updateGroupById = async (req: Request, res: Response) => {
 export const deleteGroupById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    await Group.destroy({ where: { id } }).then(
-      (success: number) => {
-        return success
-          ? res
-              .status(StatusCodes.OK)
-              .send({ message: `Group${id} deleted successfully!` })
-          : res
-              .status(StatusCodes.BAD_REQUEST)
-              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
-      },
-    );
+    await Group.destroy({ where: { id } }).then((success: number) => {
+      return success
+        ? res
+            .status(StatusCodes.OK)
+            .send({ message: `Group${id} deleted successfully!` })
+        : res
+            .status(StatusCodes.BAD_REQUEST)
+            .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
+    });
   } catch (error: unknown) {
+    if (error instanceof SyntaxError) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+    }
+  }
+};
+
+export const addUsersToGroup = async (req: Request, res: Response) => {
+  try {
+    const result = await sequelize.transaction(async (t: any) => {
+      const { userIds, groupId } = req.body;
+      const group = await Group.findOne({ id: groupId }, { transaction: t});
+
+      if (!group)
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .send(ReasonPhrases.BAD_REQUEST);
+
+      await userIds.forEach((userId: number) => {
+        UserGroup.create({ userId: userId, groupId: groupId }, { transaction: t});
+      });
+
+      return UserGroup;
+    });
+
+    if(!result) return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
+
+    res.status(StatusCodes.CREATED).send({
+      message: ReasonPhrases.CREATED,
+    });
+  } catch (error) {
     if (error instanceof SyntaxError) {
       res
         .status(StatusCodes.BAD_REQUEST)

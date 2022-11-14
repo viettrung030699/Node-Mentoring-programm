@@ -1,7 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
-import { userRouter } from './routes';
+import { groupRouter, userRouter } from './routes';
+import { sequelize } from './middleware/dbConnector';
 
 dotenv.config();
 
@@ -13,16 +14,16 @@ try {
   app.use(bodyParser.json());
 
   app.use('/users', userRouter);
-  app.use('/groups', )
+  app.use('/groups', groupRouter);
 
   app.get('/', (req: Request, res: Response) => {
     res.send('Express + TypeScript Server');
   });
 
+  sequelize.sync();
   app.listen(PORT, () => {
     console.log(`⚡️ [Server]: Server is running at https://localhost:${PORT}`);
   });
-  
 } catch (error) {
   if (error instanceof SyntaxError) {
     console.log(`Error occurred: ${error.message}`);
