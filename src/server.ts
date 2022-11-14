@@ -20,7 +20,6 @@ try {
     res.send('Express + TypeScript Server');
   });
 
-  sequelize.sync();
   app.listen(PORT, () => {
     console.log(`⚡️ [Server]: Server is running at https://localhost:${PORT}`);
   });

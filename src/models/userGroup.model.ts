@@ -4,6 +4,11 @@ import { Group } from './Group/group.model';
 import { User } from './User/user.model';
 
 export const UserGroup = sequelize.define('userGroup', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   UserId: {
     type: DataTypes.STRING,
     references: {
@@ -19,7 +24,8 @@ export const UserGroup = sequelize.define('userGroup', {
     },
   },
 }, {
-  timestamps: false
+  timestamps: false,
+  initialAutoIncrement: 0
 });
 
 sequelize.sync(); 

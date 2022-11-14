@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Group, User } from '../models';
 import { UserGroup } from '../models/userGroup.model';
 import { sequelize } from '../middleware/dbConnector';
+import { Op } from 'sequelize';
 // import { UserGroup } from '../models/userGroup.model';
 
 enum Permission {
@@ -50,7 +51,7 @@ export const getAllGroups = async (req: Request, res: Response) => {
 
 export const createGroup = async (req: Request, res: Response) => {
   try {
-    const { id, name, permissions } = req.body;
+    const { id, name, permission } = req.body;
     const availableGroup: Group = await Group.findOne({ where: { id } });
 
     if (availableGroup) {
@@ -60,7 +61,7 @@ export const createGroup = async (req: Request, res: Response) => {
     const newGroup: Group = await Group.create({
       id,
       name,
-      permissions,
+      permission,
     });
 
     if (!newGroup) {
@@ -127,25 +128,77 @@ export const deleteGroupById = async (req: Request, res: Response) => {
   }
 };
 
+// export const addUsersToGroup = async (req: Request, res: Response) => {
+//   try {
+//     const result = await sequelize.transaction().then(async (t: any) => {
+//       const { id, userIds, groupId } = req.body;
+
+//       const group = await Group.findOne(
+//         { where: { id: groupId } },
+//         { transaction: t },
+//       );
+//       const users = await User.findAll({ where: { id: { [Op.in]: userIds } } });
+
+//       if (!group)
+//         return res
+//           .status(StatusCodes.BAD_REQUEST)
+//           .send(ReasonPhrases.BAD_REQUEST);
+
+//       await group.addUsers(users);
+//       userIds.forEach(async (userId: number) => {
+//         console.log(userId);
+
+//         await UserGroup.create(
+//           { id, UserId: userId, GroupId: groupId },
+//           { transaction: t },
+//         );
+//       });
+
+//       return UserGroup.findOne({
+//         where: { id: groupId}, include: [
+//           {
+//             model: User,
+//             attributes: ["login", "password", "id", "age"]
+//           }
+//         ]
+//       });
+//     });
+
+//     if (!result)
+//       return res
+//         .status(StatusCodes.BAD_REQUEST)
+//         .send(ReasonPhrases.BAD_REQUEST);
+
+//     res.status(StatusCodes.CREATED).send({
+//       message: ReasonPhrases.CREATED, result
+//     });
+//   } catch (error) {
+//     if (error instanceof SyntaxError) {
+//       res
+//         .status(StatusCodes.BAD_REQUEST)
+//         .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
+//     }
+//   }
+// };
+
 export const addUsersToGroup = async (req: Request, res: Response) => {
   try {
-    const result = await sequelize.transaction(async (t: any) => {
-      const { userIds, groupId } = req.body;
-      const group = await Group.findOne({ id: groupId }, { transaction: t});
+    const { userIds, groupId } = req.body;
 
-      if (!group)
-        return res
-          .status(StatusCodes.BAD_REQUEST)
-          .send(ReasonPhrases.BAD_REQUEST);
+    const group = await Group.findOne({ where: { id: groupId } });
+    const users = await User.findAll(
+      { where: { id: { [Op.in]: userIds } } },
+      { atattributes: ['id', 'login', 'password', 'age', 'isDeleted'] },
+    );
 
-      await userIds.forEach((userId: number) => {
-        UserGroup.create({ userId: userId, groupId: groupId }, { transaction: t});
-      });
+    if (!group || !users)
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .send(ReasonPhrases.BAD_REQUEST);
 
-      return UserGroup;
+    users.forEach(async (user) => {
+      await UserGroup.create({ UserId: user.id, GroupId: groupId });
     });
-
-    if(!result) return res.status(StatusCodes.BAD_REQUEST).send(ReasonPhrases.BAD_REQUEST);
 
     res.status(StatusCodes.CREATED).send({
       message: ReasonPhrases.CREATED,
