@@ -3,18 +3,12 @@ import { Request, Response } from 'express';
 
 import { User } from '../models';
 import { Op } from 'sequelize';
-
-interface User {
-  id: string;
-  login: string;
-  password: string;
-  age: number;
-  isDeleted: boolean;
-}
+import { UserGroup } from '../models/UserGroup/userGroup.model';
+import { UserInterface } from '../models/Interface';
 
 export const getUserById = async (req: Request, res: Response) => {
   try {
-    const user: User = await User.findOne({
+    const user: UserInterface = await User.findOne({
       where: {
         id: req.params.id,
       },
@@ -55,13 +49,13 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const { id, login, password, age, isDeleted } = req.body;
 
-    const availableUser: User = await User.findOne({ where: { id } });
+    const availableUser: UserInterface = await User.findOne({ where: { id } });
 
     if (availableUser) {
       res.status(StatusCodes.BAD_REQUEST).send('User Exist!');
     }
 
-    const newUser: User = await User.create({
+    const newUser: UserInterface = await User.create({
       id,
       login,
       password,
@@ -118,17 +112,19 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    await User.destroy({ where: { id, isDeleted: false } }).then(
-      (success: number) => {
-        return success
-          ? res
-              .status(StatusCodes.OK)
-              .send({ message: `User${id} deleted successfully!` })
-          : res
-              .status(StatusCodes.BAD_REQUEST)
-              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
-      },
-    );
+    await UserGroup.destroy({ where: { UserId: id } }).then(async () => {
+      await User.destroy({ where: { id, isDeleted: false } }).then(
+        (success: number) => {
+          return success
+            ? res
+                .status(StatusCodes.OK)
+                .send({ message: `User${id} deleted successfully!` })
+            : res
+                .status(StatusCodes.BAD_REQUEST)
+                .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
+        },
+      );
+    });
   } catch (error: unknown) {
     if (error instanceof SyntaxError) {
       res
@@ -153,12 +149,12 @@ export const getSuggestUsers = async (req: Request, res: Response) => {
       .then((res: JSON) => JSON.stringify(res, null, 2))
       .catch((err: unknown) => console.error('Unable to get User', err));
 
-    const suggestUsers: User[] = JSON.parse(users)
+    const suggestUsers: UserInterface[] = JSON.parse(users)
       .filter(
-        (user: User) =>
+        (user: UserInterface) =>
           user.login.includes(loginSubstring.toString()) && !user.isDeleted,
       )
-      .sort((user1: User, user2: User) =>
+      .sort((user1: UserInterface, user2: UserInterface) =>
         user1.login.localeCompare(user2.login),
       )
       .slice(0, +limit);

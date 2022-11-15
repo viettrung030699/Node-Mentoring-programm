@@ -5,4 +5,3 @@ export const User = sequelize.define('users', users, {
   timestamps: false,
 });
 
-// User.sync();

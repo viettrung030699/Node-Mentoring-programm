@@ -9,6 +9,21 @@ export const userSchema = Joi.object().keys({
   isDeleted: Joi.boolean().required(),
 });
 
+export const groupSchema = Joi.object().keys({
+  id: Joi.string().required(),
+  name: Joi.string().required(),
+  permission: Joi.array()
+    .items(
+      Joi.string().valid('READ', 'WRITE', 'DELETE', 'SHARE', 'UPLOAD_FILES'),
+    )
+    .required(),
+});
+
+export const userGroupSchema = Joi.object().keys({
+  userIds: Joi.array().required(),
+  groupId: Joi.string().required(),
+});
+
 const errorResponse = (schemaErrors: Joi.ValidationErrorItem[]) => {
   const errors = schemaErrors.map((error) => {
     let { path, message } = error;

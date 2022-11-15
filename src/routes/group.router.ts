@@ -1,3 +1,4 @@
+import { groupSchema, userGroupSchema, validateSchema } from '../middleware';
 import {
   getAllGroups,
   getGroupById,
@@ -15,10 +16,10 @@ groupRouter.get('/:id', getGroupById);
 
 groupRouter.get('', getAllGroups);
 
-groupRouter.post('', createGroup);
+groupRouter.post('', validateSchema(groupSchema), createGroup);
 
-groupRouter.post('/addUsersToGroup', addUsersToGroup);
+groupRouter.put('/:id', validateSchema(groupSchema), updateGroupById);
 
-groupRouter.put('/:id', updateGroupById);
+groupRouter.post('/addUsersToGroup', validateSchema(userGroupSchema), addUsersToGroup);
 
 groupRouter.delete('/:id', deleteGroupById);

@@ -10,6 +10,7 @@ const app: Express = express();
 const PORT = process.env.port;
 
 try {
+  sequelize.sync();
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
