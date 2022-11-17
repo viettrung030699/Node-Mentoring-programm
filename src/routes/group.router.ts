@@ -6,7 +6,7 @@ import {
   updateGroupById,
   deleteGroupById,
   addUsersToGroup,
-} from '../controllers/group.controller';
+} from '../controllers';
 
 const express = require('express');
 

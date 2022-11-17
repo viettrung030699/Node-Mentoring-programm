@@ -1,11 +1,16 @@
+import { Op } from 'sequelize';
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+
+import { UserGroup } from '../models/UserGroup/userGroup.model';
 import { Group, User } from '../models';
 import { GroupInterface, UserInterface } from '../models/Interface';
-import { UserGroup } from '../models/UserGroup/userGroup.model';
-import { Op } from 'sequelize';
 
-export const getGroupById = async (req: Request, res: Response) => {
+export const getGroupById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const group = await Group.findOne({
       where: {
@@ -21,23 +26,33 @@ export const getGroupById = async (req: Request, res: Response) => {
 
     res.status(StatusCodes.OK).send(group);
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
-export const getAllGroups = async (req: Request, res: Response) => {
+export const getAllGroups = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const groups = await Group.findAll();
     res.status(StatusCodes.OK).send({ groups: groups });
   } catch (error) {
-    console.error(error);
+    next(error);
   }
 };
 
-export const createGroup = async (req: Request, res: Response) => {
+export const createGroup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id, name, permission } = req.body;
-    const availableGroup: GroupInterface = await Group.findOne({ where: { id } });
+    const availableGroup: GroupInterface = await Group.findOne({
+      where: { id },
+    });
 
     if (availableGroup) {
       res.status(StatusCodes.OK).send('Group Exist!');
@@ -57,15 +72,15 @@ export const createGroup = async (req: Request, res: Response) => {
       message: `Create Successed ${newGroup.id} - ${newGroup.name}.`,
     });
   } catch (error) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const updateGroupById = async (req: Request, res: Response) => {
+export const updateGroupById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const { name, permissions } = req.body;
@@ -84,15 +99,15 @@ export const updateGroupById = async (req: Request, res: Response) => {
         throw new Error(error.message);
       });
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const deleteGroupById = async (req: Request, res: Response) => {
+export const deleteGroupById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     await UserGroup.destroy({ where: { GroupId: id } }).then(async () => {
@@ -107,15 +122,15 @@ export const deleteGroupById = async (req: Request, res: Response) => {
       });
     });
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const addUsersToGroup = async (req: Request, res: Response) => {
+export const addUsersToGroup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { userIds, groupId } = req.body;
 
@@ -138,10 +153,6 @@ export const addUsersToGroup = async (req: Request, res: Response) => {
       message: ReasonPhrases.CREATED,
     });
   } catch (error) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };

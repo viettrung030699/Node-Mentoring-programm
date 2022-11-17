@@ -1,12 +1,16 @@
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { User } from '../models';
 import { Op } from 'sequelize';
 import { UserGroup } from '../models/UserGroup/userGroup.model';
 import { UserInterface } from '../models/Interface';
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user: UserInterface = await User.findOne({
       where: {
@@ -22,30 +26,28 @@ export const getUserById = async (req: Request, res: Response) => {
 
     res.status(StatusCodes.OK).send(user);
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const users = await User.findAll();
     res.status(StatusCodes.OK).send({ users: users });
   } catch (error: unknown) {
-    console.error(error);
-
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id, login, password, age, isDeleted } = req.body;
 
@@ -71,15 +73,15 @@ export const createUser = async (req: Request, res: Response) => {
       message: `Create Successed ${newUser.id} - ${newUser.login}`,
     });
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     const { login, password, age, isDeleted } = req.body;
@@ -101,15 +103,15 @@ export const updateUser = async (req: Request, res: Response) => {
         throw new Error(error.message);
       });
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { id } = req.params;
     await UserGroup.destroy({ where: { UserId: id } }).then(async () => {
@@ -126,15 +128,15 @@ export const deleteUser = async (req: Request, res: Response) => {
       );
     });
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
 
-export const getSuggestUsers = async (req: Request, res: Response) => {
+export const getSuggestUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     let { loginSubstring = '', limit = 4 } = req.query;
 
@@ -161,10 +163,6 @@ export const getSuggestUsers = async (req: Request, res: Response) => {
 
     return res.status(StatusCodes.OK).send({ suggestUsers: suggestUsers });
   } catch (error: unknown) {
-    if (error instanceof SyntaxError) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .send({ error: error.message, Message: ReasonPhrases.BAD_REQUEST });
-    }
+    next(error);
   }
 };
