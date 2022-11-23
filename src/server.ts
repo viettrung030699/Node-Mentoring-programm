@@ -4,7 +4,7 @@ import express, { Express, Request, Response } from 'express';
 
 import { groupRouter, userRouter } from './routes';
 import { sequelize, errorHandler } from './middleware';
-import { winstonLogger, log } from './middleware/Logger';
+import { winstonLogger, logger } from './middleware/Logger';
 
 dotenv.config();
 
@@ -15,7 +15,7 @@ try {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
-  app.use(log);
+  app.use(logger);
   app.use('/users', userRouter);
   app.use('/groups', groupRouter);
 

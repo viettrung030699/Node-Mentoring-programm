@@ -1,17 +1,13 @@
-import { Request, Response, NextFunction  } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { winstonLogger } from './winstonLogger';
 
-export const log = function (req: Request, res: Response, next: NextFunction) {
-  console.log(
-    '\x1b[36m%s%s1\x1b[0m',
-    '\npath: ',
-    req.originalUrl,
-    '\nbody:',
-    req.body,
-    '\nparams :',
-    req.params,
-    '\nqueryParams:',
-    req.query,
-    '\n',
-  );
+export const logger = function (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const log = `${req.method} ${req.url} Params: ${JSON.stringify(req.params)} Body: ${JSON.stringify(req.body)}`;
+
+  winstonLogger.info(log);
   next();
 };

@@ -10,7 +10,6 @@ export const winstonLogger = winston.createLogger({
 
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.timestamp(),
         winston.format.prettyPrint(),
         winston.format.label({ label: 'Winston Error Handler...' }),
       ),
@@ -22,7 +21,6 @@ export const winstonLogger = winston.createLogger({
     }),
     new winston.transports.File({
       filename: 'combine.log',
-      level: 'info',
       format: winston.format.json(),
     }),
   ],
