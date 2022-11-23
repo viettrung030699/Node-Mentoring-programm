@@ -1,9 +1,9 @@
 import { winstonLogger } from './Logger';
-import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 
 export const errorHandler = (
-  err: ErrorRequestHandler,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction,
@@ -20,6 +20,9 @@ export const errorHandler = (
   });
 
   res
-    .status(StatusCodes.INTERNAL_SERVER_ERROR)
-    .send(ReasonPhrases.INTERNAL_SERVER_ERROR);
+    .status(StatusCodes.INTERNAL_SERVER_ERROR || err.status)
+    .json({
+      status: StatusCodes.INTERNAL_SERVER_ERROR || err.status,
+      message: err.message
+    });
 };
