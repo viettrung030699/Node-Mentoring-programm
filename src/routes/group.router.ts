@@ -1,4 +1,4 @@
-import { groupSchema, userGroupSchema, validateSchema } from '../middleware';
+import { groupSchema, userGroupSchema, validateSchema } from '../validation/validation';
 import {
   getAllGroups,
   getGroupById,
@@ -14,9 +14,9 @@ export const groupRouter = express.Router();
 
 groupRouter.get('/:id', getGroupById);
 
-groupRouter.get('', getAllGroups);
+groupRouter.get('/', getAllGroups);
 
-groupRouter.post('', validateSchema(groupSchema), createGroup);
+groupRouter.post('/', validateSchema(groupSchema), createGroup);
 
 groupRouter.put('/:id', validateSchema(groupSchema), updateGroupById);
 

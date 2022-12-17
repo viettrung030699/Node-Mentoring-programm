@@ -1,3 +1,3 @@
-export * from './validation';
-export * from './dbConnector';
+export * from './logger';
+export * from './winstonLogger';
 export * from './errorHandler';

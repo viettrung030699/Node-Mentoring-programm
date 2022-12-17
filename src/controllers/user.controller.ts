@@ -25,7 +25,7 @@ export const getUserById = async (
     }
 
     res.status(StatusCodes.OK).send(user);
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -38,7 +38,7 @@ export const getAllUsers = async (
   try {
     const users = await User.findAll();
     res.status(StatusCodes.OK).send({ users: users });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -72,7 +72,7 @@ export const createUser = async (
     res.status(StatusCodes.OK).send({
       message: `Create Successed ${newUser.id} - ${newUser.login}`,
     });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -102,7 +102,7 @@ export const updateUser = async (
       .catch((error: any) => {
         throw new Error(error.message);
       });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -127,7 +127,7 @@ export const deleteUser = async (
         },
       );
     });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -149,7 +149,7 @@ export const getSuggestUsers = async (
       },
     })
       .then((res: JSON) => JSON.stringify(res, null, 2))
-      .catch((err: unknown) => console.error('Unable to get User', err));
+      .catch((err: any) => console.error('Unable to get User', err));
 
     const suggestUsers: UserInterface[] = JSON.parse(users)
       .filter(
@@ -162,7 +162,7 @@ export const getSuggestUsers = async (
       .slice(0, +limit);
 
     return res.status(StatusCodes.OK).send({ suggestUsers: suggestUsers });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };

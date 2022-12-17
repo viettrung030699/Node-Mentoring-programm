@@ -25,7 +25,7 @@ export const getGroupById = async (
     }
 
     res.status(StatusCodes.OK).send(group);
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -38,7 +38,7 @@ export const getAllGroups = async (
   try {
     const groups = await Group.findAll();
     res.status(StatusCodes.OK).send({ groups: groups });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -71,7 +71,7 @@ export const createGroup = async (
     res.status(StatusCodes.OK).send({
       message: `Create Successed ${newGroup.id} - ${newGroup.name}.`,
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -98,7 +98,7 @@ export const updateGroupById = async (
       .catch((error: any) => {
         throw new Error(error.message);
       });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -121,7 +121,7 @@ export const deleteGroupById = async (
               .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
       });
     });
-  } catch (error: unknown) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -152,7 +152,7 @@ export const addUsersToGroup = async (
     res.status(StatusCodes.CREATED).send({
       message: ReasonPhrases.CREATED,
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 };

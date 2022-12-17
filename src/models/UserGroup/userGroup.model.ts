@@ -1,4 +1,4 @@
-import { sequelize } from '../../middleware/dbConnector';
+import { sequelize } from '../../connection/dbConnector';
 import { userGroup } from './userGroup';
 
 export const UserGroup = sequelize.define('userGroup', userGroup, {

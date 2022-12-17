@@ -1,6 +1,7 @@
-import { winstonLogger } from './Logger';
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
+
+import { winstonLogger } from './winstonLogger';
 
 export const errorHandler = (
   err: any,
@@ -19,10 +20,8 @@ export const errorHandler = (
     query: req.query,
   });
 
-  res
-    .status(StatusCodes.INTERNAL_SERVER_ERROR || err.status)
-    .json({
-      status: StatusCodes.INTERNAL_SERVER_ERROR || err.status,
-      message: err.message
-    });
+  res.status(StatusCodes.INTERNAL_SERVER_ERROR || err.status).json({
+    status: StatusCodes.INTERNAL_SERVER_ERROR || err.status,
+    message: err.message,
+  });
 };

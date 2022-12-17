@@ -17,14 +17,3 @@ export const sequelize = new Sequelize(
     },
   },
 );
-
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch((error: unknown) => {
-    if (error instanceof SyntaxError) {
-      console.error('Unable to connect to the database: ', error);
-    }
-  });
