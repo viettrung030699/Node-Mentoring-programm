@@ -4,7 +4,8 @@ import express, { Express, Request, Response } from 'express';
 
 import { sequelize } from './connection/dbConnector';
 import { groupRouter, userRouter } from './routes';
-import { errorHandler, logger, winstonLogger } from './middleware';
+import { errorHandler, logger, winstonLogger } from './middlewares';
+import { publicRouter } from './routes/public.router';
 
 dotenv.config();
 
@@ -26,11 +27,11 @@ try {
     }
   });
 
-  app.use(logger);
   app.use('/users', userRouter);
   app.use('/groups', groupRouter);
-  app.use(errorHandler);
-
+  app.use('/', publicRouter);
+  app.use(logger, errorHandler);
+  
   process.on('unhandledRejection', (e, origin) => {
     winstonLogger.error('Winston Unhandled Rejection Logger...', e, origin);
   });

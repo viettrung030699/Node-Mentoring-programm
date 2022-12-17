@@ -1,0 +1,46 @@
+### GET AlL Users 
+GET http://localhost:3000/users
+
+### Get Suggested Users
+GET http://localhost:3000/users/filter HTTP/1.1
+content-type: application/json
+
+{
+  "substring" : "avscs"
+}
+
+### Get User by id
+GET http://localhost:3000/users/3
+
+### Create New User
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "id": "22",
+  "login": "user22",
+  "password": "Trungser123",
+  "age": 50,
+  "isDeleted": false
+}
+
+### Update User
+PUT  http://localhost:3000/users/3
+Content-Type: application/json
+
+{
+    "id": "3",
+    "login": "updatedUser30",
+    "password": "user123",
+    "age": 30,
+    "isDeleted": false
+}
+
+### POST Login User
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "login": "user3",
+  "password": "123"
+}
