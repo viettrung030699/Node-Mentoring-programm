@@ -21,3 +21,39 @@
 {"errors":[{"instance":{"age":50,"id":"8ab67e7e-94d4-4609-827c-bb1e38c879fd","isDeleted":false,"login":"user22","password":"$2b$10$tYg8R.HEhgAzkU2rrU0HsOuxCm2kueEIJ3ZdJDrqF1QYQ.FseqxPS"},"message":"Password does not meets the requirements","origin":"FUNCTION","original":{},"path":"password","type":"Validation error","validatorArgs":[],"validatorKey":"validatePassword","validatorName":null,"value":"$2b$10$tYg8R.HEhgAzkU2rrU0HsOuxCm2kueEIJ3ZdJDrqF1QYQ.FseqxPS"}],"level":"error","message":"Winston Unhandled Rejection Logger... Validation error: Password does not meets the requirements","name":"SequelizeValidationError","stack":"SequelizeValidationError: Validation error: Password does not meets the requirements\n    at InstanceValidator._validate (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\instance-validator.js:50:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async InstanceValidator._validateAndRunHooks (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\instance-validator.js:60:7)\n    at async InstanceValidator.validate (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\instance-validator.js:54:12)\n    at async model.save (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\model.js:2368:7)\n    at async users.create (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\model.js:1344:12)"}
 {"errors":[{"instance":{"age":50,"id":"edd602c6-336b-4dbc-a3ba-77b5730ed35e","isDeleted":false,"login":"user22","password":"$2b$10$AQCMJYwrIF8jAojKkbJgZu3rtF/nX8o9yaYEzmeJ3LJerEkQsHXeC"},"message":"Password does not meets the requirements","origin":"FUNCTION","original":{},"path":"password","type":"Validation error","validatorArgs":[],"validatorKey":"validatePassword","validatorName":null,"value":"$2b$10$AQCMJYwrIF8jAojKkbJgZu3rtF/nX8o9yaYEzmeJ3LJerEkQsHXeC"}],"level":"error","message":"Winston Unhandled Rejection Logger... Validation error: Password does not meets the requirements","name":"SequelizeValidationError","stack":"SequelizeValidationError: Validation error: Password does not meets the requirements\n    at InstanceValidator._validate (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\instance-validator.js:50:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async InstanceValidator._validateAndRunHooks (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\instance-validator.js:60:7)\n    at async InstanceValidator.validate (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\instance-validator.js:54:12)\n    at async model.save (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\model.js:2368:7)\n    at async users.create (C:\\NodeJS\\Node-Mentoring-programm\\node_modules\\sequelize\\lib\\model.js:1344:12)"}
 {"level":"error","message":"Winston Unhandled Rejection Logger... 400 in createUser Service","stack":"Error: 400 in createUser Service\n    at C:\\NodeJS\\Node-Mentoring-programm\\dist\\services\\user.service.js:29:19\n    at Generator.next (<anonymous>)\n    at fulfilled (C:\\NodeJS\\Node-Mentoring-programm\\dist\\services\\user.service.js:5:58)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+{"body":{"substring":"avscs"},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{}}
+{"body":{"substring":"trung"},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":""}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{"substring":"trung"},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":""}}
+{"body":{"substring":"trung"},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":""}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"substring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"trung"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"user"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"user"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"user"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"user"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"user"}}
+{"body":{},"level":"error","message":"Error","params":{},"path":"/users/filter","query":{"loginSubstring":"user"}}
+{"body":{"login":"user3","password":"123"},"level":"error","message":"ReferenceError","params":{},"path":"/login","query":{}}
+{"body":{"login":"user3","password":"123"},"level":"error","message":"Error","params":{},"path":"/login","query":{}}
+{"body":{"login":"user1","password":"123"},"level":"error","message":"Error","params":{},"path":"/login","query":{}}
+{"body":{"login":"user1","password":"123"},"level":"error","message":"Error","params":{},"path":"/login","query":{}}
+{"body":{"login":"user22","password":"Trungs3"},"level":"error","message":"Error","params":{},"path":"/login","query":{}}
+{"body":{"login":"user22","password":"Trungs3"},"level":"error","message":"Error","params":{},"path":"/login","query":{}}
+{"body":{"login":"user22","password":"Trungser123"},"level":"error","message":"Error","params":{},"path":"/login","query":{}}

@@ -1,168 +1,123 @@
-import { StatusCodes, ReasonPhrases } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
-import { User } from '../models';
-import { Op } from 'sequelize';
-import { UserGroup } from '../models/UserGroup/userGroup.model';
-import { UserInterface } from '../models/Interface';
+import {
+  ERROR_400_MESSAGE,
+  ERROR_400_USER_DELETED_FAILED,
+  ERROR_400_USER_NOT_FOUND,
+  ERROR_400_USER_UPDATED_FAILED,
+  OK_200_UPDATE,
+} from '../constants';
+import { UserService } from '../services';
 
-export const getUserById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const user: UserInterface = await User.findOne({
-      where: {
-        id: req.params.id,
-      },
-    });
-
-    if (!user) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .send(ReasonPhrases.BAD_REQUEST);
+export const UserController = {
+  getUserById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (!id) throw new Error(ERROR_400_USER_NOT_FOUND);
+      const user = await UserService.getUserById(id);
+      if (!user) throw new Error(ERROR_400_USER_NOT_FOUND);
+      res.status(StatusCodes.OK).json(user);
+    } catch (error: any) {
+      next(error);
     }
-
-    res.status(StatusCodes.OK).send(user);
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getAllUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const users = await User.findAll();
-    res.status(StatusCodes.OK).send({ users: users });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const createUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id, login, password, age, isDeleted } = req.body;
-
-    const availableUser: UserInterface = await User.findOne({ where: { id } });
-
-    if (availableUser) {
-      res.status(StatusCodes.BAD_REQUEST).send('User Exist!');
+  },
+  getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await UserService.getAllUsers();
+      res.status(StatusCodes.OK).json(users);
+    } catch (error: any) {
+      next(error);
     }
-
-    const newUser: UserInterface = await User.create({
-      id,
-      login,
-      password,
-      age,
-      isDeleted,
-    });
-
-    if (!newUser) {
-      res.status(StatusCodes.BAD_REQUEST).send('Unable to create new User');
+  },
+  createUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userInfo = req.body;
+      const newUser = await UserService.createUser(userInfo);
+      res.status(StatusCodes.OK).json(newUser);
+    } catch (error: any) {
+      next(error);
     }
+  },
+  updateUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const userInfo = req.body;
 
-    res.status(StatusCodes.OK).send({
-      message: `Create Successed ${newUser.id} - ${newUser.login}`,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const updateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-    const { login, password, age, isDeleted } = req.body;
-
-    await User.update(
-      { login, password, age, isDeleted },
-      { where: { id: id } },
-    )
-      .then((success: number) => {
-        return success
-          ? res
-              .status(StatusCodes.OK)
-              .send({ message: `User${id} updated successfully!` })
-          : res
-              .status(StatusCodes.BAD_REQUEST)
-              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
-      })
-      .catch((error: any) => {
-        throw new Error(error.message);
-      });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const deleteUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-    await UserGroup.destroy({ where: { UserId: id } }).then(async () => {
-      await User.destroy({ where: { id, isDeleted: false } }).then(
-        (success: number) => {
+      await UserService.updateUser(id, userInfo)
+        .then((success: number) => {
           return success
-            ? res
-                .status(StatusCodes.OK)
-                .send({ message: `User${id} deleted successfully!` })
+            ? res.status(StatusCodes.OK).send({ message: OK_200_UPDATE })
             : res
                 .status(StatusCodes.BAD_REQUEST)
-                .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
-        },
-      );
-    });
-  } catch (error: any) {
-    next(error);
-  }
+                .send({
+                  error: success,
+                  Message: ERROR_400_USER_UPDATED_FAILED,
+                });
+        })
+        .catch((error: any) => {
+          throw new Error(ERROR_400_USER_NOT_FOUND);
+        });
+    } catch (error: any) {
+      next(error);
+    }
+  },
+  deleteUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const success = await UserService.deleteUser(id);
+      return success
+        ? res.status(StatusCodes.OK).send({ message: OK_200_UPDATE })
+        : res
+            .status(StatusCodes.BAD_REQUEST)
+            .send({ error: success, Message: ERROR_400_USER_DELETED_FAILED });
+    } catch (error: any) {
+      next(error);
+    }
+  },
+  getSuggestUsers: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const filteredUsers = UserService.filterUsers(req.query);
+
+      return res.status(StatusCodes.OK).send({ suggestUsers: filteredUsers });
+    } catch (error: any) {
+      next(error);
+    }
+    return res.status(StatusCodes.BAD_REQUEST).send(ERROR_400_MESSAGE);
+  },
 };
 
-export const getSuggestUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    let { loginSubstring = '', limit = 4 } = req.query;
+// export const getSuggestUsers = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     let { loginSubstring = '', limit = 4 } = req.query;
 
-    const users: string = await User.findAll({
-      limit,
-      where: {
-        login: {
-          [Op.substring]: loginSubstring,
-        },
-      },
-    })
-      .then((res: JSON) => JSON.stringify(res, null, 2))
-      .catch((err: any) => console.error('Unable to get User', err));
+//     const users: string = await User.findAll({
+//       limit,
+//       where: {
+//         login: {
+//           [Op.substring]: loginSubstring,
+//         },
+//       },
+//     })
+//       .then((res: JSON) => JSON.stringify(res, null, 2))
+//       .catch((err: any) => console.error('Unable to get User', err));
 
-    const suggestUsers: UserInterface[] = JSON.parse(users)
-      .filter(
-        (user: UserInterface) =>
-          user.login.includes(loginSubstring.toString()) && !user.isDeleted,
-      )
-      .sort((user1: UserInterface, user2: UserInterface) =>
-        user1.login.localeCompare(user2.login),
-      )
-      .slice(0, +limit);
+//     const suggestUsers: UserInterface[] = JSON.parse(users)
+//       .filter(
+//         (user: UserInterface) =>
+//           user.login.includes(loginSubstring.toString()) && !user.isDeleted,
+//       )
+//       .sort((user1: UserInterface, user2: UserInterface) =>
+//         user1.login.localeCompare(user2.login),
+//       )
+//       .slice(0, +limit);
 
-    return res.status(StatusCodes.OK).send({ suggestUsers: suggestUsers });
-  } catch (error: any) {
-    next(error);
-  }
-};
+//     return res.status(StatusCodes.OK).send({ suggestUsers: suggestUsers });
+//   } catch (error: any) {
+//     next(error);
+//   }
+// };

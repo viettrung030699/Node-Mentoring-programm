@@ -2,9 +2,8 @@ import { Op } from 'sequelize';
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
-import { UserGroup } from '../models/UserGroup/userGroup.model';
-import { Group, User } from '../models';
-import { GroupInterface, UserInterface } from '../models/Interface';
+import { Group, User, UserGroup } from '../models';
+import { GroupInterface, UserInterface } from '../interfaces';
 
 export const getGroupById = async (
   req: Request,

@@ -1,21 +1,16 @@
-import { userSchema, validateSchema } from '../validation';
-import {
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-  getAllUsers,
-  getSuggestUsers,
-} from '../controllers';
+import { UserController } from '../controllers';
+import { userSchema, validateSchema } from '../validations';
 
 const express = require('express');
 export const userRouter = express.Router();
 
-userRouter.get('/:id', getUserById);
-userRouter.get('/', getSuggestUsers);
+userRouter.get('/', UserController.getAllUsers);
 
-userRouter.get('/all', getAllUsers);
+userRouter.get('/:id', UserController.getUserById);
 
-userRouter.post('/', validateSchema(userSchema), createUser);
-userRouter.put('/:id', validateSchema(userSchema), updateUser);
-userRouter.delete('/:id', deleteUser);
+userRouter.get('/filter', UserController.getSuggestUsers);
+
+
+userRouter.post('/', validateSchema(userSchema), UserController.createUser);
+userRouter.put('/:id', validateSchema(userSchema), UserController.updateUser);
+userRouter.delete('/:id', UserController.deleteUser);

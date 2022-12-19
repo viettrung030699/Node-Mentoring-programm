@@ -1,4 +1,4 @@
-import { groupSchema, userGroupSchema, validateSchema } from '../validation/validation';
+import { groupSchema, userGroupSchema, validateSchema } from '../validations/validation';
 import {
   getAllGroups,
   getGroupById,

@@ -10,11 +10,13 @@ import { publicRouter } from './routes/public.router';
 dotenv.config();
 
 const app: Express = express();
+const cors = require('cors');
 const PORT = process.env.port;
 
 try {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
+  app.use(cors());
 
   sequelize
   .authenticate()

@@ -2,12 +2,7 @@
 GET http://localhost:3000/users
 
 ### Get Suggested Users
-GET http://localhost:3000/users/filter HTTP/1.1
-content-type: application/json
-
-{
-  "substring" : "avscs"
-}
+GET http://localhost:3000/users/filter?loginSubstring=user
 
 ### Get User by id
 GET http://localhost:3000/users/3
@@ -36,11 +31,19 @@ Content-Type: application/json
     "isDeleted": false
 }
 
+### Delete User
+DELETE   http://localhost:3000/users/21
+
 ### POST Login User
 POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "login": "user3",
-  "password": "123"
+  "login": "user22",
+  "password": "Trungser123"
 }
+
+# {
+#   "login": "user22",
+#   "password": "Trungs3"
+# }

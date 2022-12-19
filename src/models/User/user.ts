@@ -10,13 +10,6 @@ export const users = {
   password: {
     type: Sequelize.STRING,
     allowNull: false,
-    validate: {
-      validatePassword: function (value: string) {
-        if (!/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/i.test(value)) {
-          throw new Error('Password does not meets the requirements');
-        }
-      },
-    },
   },
   age: {
     type: Sequelize.INTEGER,
