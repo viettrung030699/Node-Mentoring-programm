@@ -2,16 +2,24 @@ import { User as UserAccessLayer } from '../DAO/User';
 import { UserInterface } from '../interfaces';
 import { v4 } from 'uuid';
 import { encryptPassword, verifyPassword } from '../utils/utils';
-import { ERROR_400_MESSAGE, ERROR_400_USER_EXISTED, ERROR_400_USER_NOT_FOUND } from '../constants';
+import {
+  ERROR_400_MESSAGE,
+  ERROR_400_USERS_NOT_FOUND,
+  ERROR_400_USER_DELETED_FAILED,
+  ERROR_400_USER_EXISTED,
+  ERROR_400_USER_NOT_FOUND,
+} from '../constants';
 
 export const UserService = {
   getUserById: (id: string) => {
     const user = UserAccessLayer.getUserById(id);
+    if (!user) throw new Error(ERROR_400_USER_NOT_FOUND);
 
     return user;
   },
   getAllUsers: () => {
     const users = UserAccessLayer.getAllUsers();
+    if (!users) throw new Error(ERROR_400_USERS_NOT_FOUND);
 
     return users;
   },
@@ -60,6 +68,7 @@ export const UserService = {
   },
   authorization: async (login: string, password: string) => {
     const existedUser = await UserAccessLayer.getUserByLogin(login);
+    console.log({existedUser});
     if (!existedUser) throw new Error(ERROR_400_USER_NOT_FOUND);
     const encryptPassword = existedUser.password;
     const verifiedPassword = verifyPassword(password, encryptPassword);

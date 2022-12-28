@@ -1,0 +1,73 @@
+export const usersData = [
+  {
+    id: '1',
+    login: 'user1',
+    password: '123',
+    age: 20,
+    isDeleted: false,
+  },
+  {
+    id: '2',
+    login: 'user2',
+    password: '123',
+    age: 50,
+    isDeleted: false,
+  },
+  {
+    id: '4',
+    login: 'user4',
+    password: '123',
+    age: 21,
+    isDeleted: false,
+  },
+  {
+    id: '5',
+    login: 'user5',
+    password: '123',
+    age: 18,
+    isDeleted: false,
+  },
+  {
+    id: '6',
+    login: 'user6',
+    password: '123',
+    age: 35,
+    isDeleted: false,
+  },
+  {
+    id: '7',
+    login: 'user7',
+    password: 'user123',
+    age: 31,
+    isDeleted: false,
+  },
+  {
+    id: '8',
+    login: 'user8',
+    password: 'user123',
+    age: 25,
+    isDeleted: false,
+  },
+  {
+    id: '20',
+    login: 'user20',
+    password: 'user123',
+    age: 25,
+    isDeleted: false,
+  },
+  {
+    id: '6593bbe6-a578-48f6-9db7-ccd16f5582f3',
+    login: 'user22',
+    password:
+      '$2b$10$tzvBPG.DXDoBdyn4q0zG8eLgEC1b9nVbw2xskupHdTslEUPLvdKnm',
+    age: 50,
+    isDeleted: false,
+  },
+  {
+    id: '3',
+    login: 'updatedUser30',
+    password: 'user123',
+    age: 30,
+    isDeleted: false,
+  },
+];

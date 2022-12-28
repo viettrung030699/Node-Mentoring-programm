@@ -10,11 +10,12 @@ export const encryptPassword = (password: string, SALT_ROUNDS = 10) => {
 };
 
 export const verifyPassword = (password: string, dbPassword: string) => {
-  console.log(dbPassword);
-  return bcrypt.compareSync(password, dbPassword)
+  console.log({ dbPassword });
+  return bcrypt.compareSync(password, dbPassword);
 };
 
 export const getSecretKey = (secretKey?: string) => {
+  console.log({ secretKey });
   if (!secretKey) throw new Error(ERROR_403_FORBIDDEN);
 
   return secretKey;
@@ -22,14 +23,23 @@ export const getSecretKey = (secretKey?: string) => {
 
 export const verifyToken = (token: string) => {
   try {
-    jwt.verify(token, getSecretKey(process.env.JWT_SECRET_KEY), {
-      algorithms: ['HS256'],
-    });
+    console.log({ token });
+    jwt.verify(
+      token,
+      getSecretKey(process.env.JWT_SECRET_KEY),
+      {
+        algorithms: ['HS256'],
+      },
+      function (err: any, payload: any) {
+        if(err) throw new Error('TokenExpiredError');
+        console.log({ payload });
+      },
+    );
   } catch (error: any) {
     if (error instanceof Error) throw new Error(ERROR_403_FORBIDDEN);
   }
 };
 
 export const generateAccessToken = (payload: any) => {
-  return jwt.sign(payload, getSecretKey(process.env.JWT_SECRET_KEY), { expiresIn: '15s' });
+  return jwt.sign(payload, getSecretKey(process.env.JWT_SECRET_KEY));
 };

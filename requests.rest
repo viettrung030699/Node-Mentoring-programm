@@ -1,26 +1,26 @@
 ### GET AlL Users 
-GET http://localhost:3000/users
+GET http://localhost:3000/api/v1/users/getAllUsers
 
 ### Get Suggested Users
-GET http://localhost:3000/users/filter?loginSubstring=user
+GET http://localhost:3000/api/v1/users/filter?loginSubstring=user
 
 ### Get User by id
-GET http://localhost:3000/users/3
+GET http://localhost:3000/api/v1/users/34
 
 ### Create New User
-POST http://localhost:3000/users
+POST http://localhost:3000/api/v1/users/create
 Content-Type: application/json
 
 {
   "id": "22",
   "login": "user22",
-  "password": "Trungser123",
+  "password": "trung123",
   "age": 50,
   "isDeleted": false
 }
 
 ### Update User
-PUT  http://localhost:3000/users/3
+PUT  http://localhost:3000/api/v1/users/3
 Content-Type: application/json
 
 {
@@ -32,10 +32,10 @@ Content-Type: application/json
 }
 
 ### Delete User
-DELETE   http://localhost:3000/users/21
+DELETE   http://localhost:3000/api/v1/users/21
 
 ### POST Login User
-POST http://localhost:3000/login
+POST http://localhost:3000/api/v1/login
 Content-Type: application/json
 
 {

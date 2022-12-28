@@ -1,23 +1,19 @@
 import { StatusCodes } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
-import {
-  ERROR_400_MESSAGE,
-  ERROR_400_USER_DELETED_FAILED,
-  ERROR_400_USER_NOT_FOUND,
-  ERROR_400_USER_UPDATED_FAILED,
-  OK_200_UPDATE,
-} from '../constants';
 import { UserService } from '../services';
+import { ERROR_400_MESSAGE, ERROR_400_USER_NOT_FOUND } from '../constants';
 
 export const UserController = {
   getUserById: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      if (!id) throw new Error(ERROR_400_USER_NOT_FOUND);
+      if (!id) throw new Error(ERROR_400_MESSAGE);
       const user = await UserService.getUserById(id);
       if (!user) throw new Error(ERROR_400_USER_NOT_FOUND);
-      res.status(StatusCodes.OK).json(user);
+      res
+        .status(StatusCodes.OK)
+        .json({ user, msg: 'Successfully retrieved user' });
     } catch (error: any) {
       next(error);
     }
@@ -25,7 +21,10 @@ export const UserController = {
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await UserService.getAllUsers();
-      res.status(StatusCodes.OK).json(users);
+
+      res
+        .status(StatusCodes.OK)
+        .json({ users, msg: 'Successfully retrieved all users' });
     } catch (error: any) {
       next(error);
     }
@@ -34,7 +33,9 @@ export const UserController = {
     try {
       const userInfo = req.body;
       const newUser = await UserService.createUser(userInfo);
-      res.status(StatusCodes.OK).json(newUser);
+      res
+        .status(StatusCodes.OK)
+        .json({ newUser, msg: 'Successfully created new user' });
     } catch (error: any) {
       next(error);
     }
@@ -44,20 +45,10 @@ export const UserController = {
       const { id } = req.params;
       const userInfo = req.body;
 
-      await UserService.updateUser(id, userInfo)
-        .then((success: number) => {
-          return success
-            ? res.status(StatusCodes.OK).send({ message: OK_200_UPDATE })
-            : res
-                .status(StatusCodes.BAD_REQUEST)
-                .send({
-                  error: success,
-                  Message: ERROR_400_USER_UPDATED_FAILED,
-                });
-        })
-        .catch((error: any) => {
-          throw new Error(ERROR_400_USER_NOT_FOUND);
-        });
+      const updatedUser = await UserService.updateUser(id, userInfo);
+      res
+        .status(StatusCodes.OK)
+        .send({ msg: 'Successfully updated user', updatedUser });
     } catch (error: any) {
       next(error);
     }
@@ -66,11 +57,7 @@ export const UserController = {
     try {
       const { id } = req.params;
       const success = await UserService.deleteUser(id);
-      return success
-        ? res.status(StatusCodes.OK).send({ message: OK_200_UPDATE })
-        : res
-            .status(StatusCodes.BAD_REQUEST)
-            .send({ error: success, Message: ERROR_400_USER_DELETED_FAILED });
+      res.status(StatusCodes.OK).send({ msg: 'Successfully deleted user' });
     } catch (error: any) {
       next(error);
     }
@@ -86,38 +73,3 @@ export const UserController = {
     return res.status(StatusCodes.BAD_REQUEST).send(ERROR_400_MESSAGE);
   },
 };
-
-// export const getSuggestUsers = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     let { loginSubstring = '', limit = 4 } = req.query;
-
-//     const users: string = await User.findAll({
-//       limit,
-//       where: {
-//         login: {
-//           [Op.substring]: loginSubstring,
-//         },
-//       },
-//     })
-//       .then((res: JSON) => JSON.stringify(res, null, 2))
-//       .catch((err: any) => console.error('Unable to get User', err));
-
-//     const suggestUsers: UserInterface[] = JSON.parse(users)
-//       .filter(
-//         (user: UserInterface) =>
-//           user.login.includes(loginSubstring.toString()) && !user.isDeleted,
-//       )
-//       .sort((user1: UserInterface, user2: UserInterface) =>
-//         user1.login.localeCompare(user2.login),
-//       )
-//       .slice(0, +limit);
-
-//     return res.status(StatusCodes.OK).send({ suggestUsers: suggestUsers });
-//   } catch (error: any) {
-//     next(error);
-//   }
-// };

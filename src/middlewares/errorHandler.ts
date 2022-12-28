@@ -9,6 +9,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log('error', err);
   if (res.headersSent) {
     return next(err);
   }
@@ -20,8 +21,8 @@ export const errorHandler = (
     query: req.query,
   });
 
-  res.status(StatusCodes.INTERNAL_SERVER_ERROR || err.status).json({
-    status: StatusCodes.INTERNAL_SERVER_ERROR || err.status,
+  res.status(StatusCodes.BAD_REQUEST).json({
+    status: err.status || StatusCodes.BAD_REQUEST,
     message: err.message,
   });
 };

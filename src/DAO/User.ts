@@ -18,6 +18,10 @@ export const User = {
         login: login,
       },
     });
+    if (user === null) {
+      return false;
+    }
+
     return user;
   },
   getAllUsers: async () => {
@@ -47,11 +51,11 @@ export const User = {
 
     if (!targetUser) throw new Error(`User ${id} does not exist`);
 
-    const updatedUser = await UserModel.destroy({
+    await UserModel.destroy({
       where: { id: id, isDeleted: false },
     });
 
-    return updatedUser;
+    return targetUser.isDeleted;
   },
   filterUsers: async (loginSubstring: string, limit: number) => {
     const filteredUsers = await UserModel.findAll({
