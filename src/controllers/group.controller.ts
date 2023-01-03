@@ -1,157 +1,76 @@
-import { Op } from 'sequelize';
-import { StatusCodes, ReasonPhrases } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { NextFunction, Request, Response } from 'express';
 
-import { Group, User, UserGroup } from '../models';
-import { GroupInterface, UserInterface } from '../interfaces';
+import { GroupService } from '../services';
 
-export const getGroupById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const group = await Group.findOne({
-      where: {
-        id: req.params.id,
-      },
-    });
-
-    if (!group) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .send(ReasonPhrases.BAD_REQUEST);
+export const GroupController = {
+  getGroupById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const group = await GroupService.getGroupById(id);
+      res
+        .status(StatusCodes.OK)
+        .json({ group, msg: 'Successfully retrieved group' });
+    } catch (error: any) {
+      next(error);
     }
-
-    res.status(StatusCodes.OK).send(group);
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const getAllGroups = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const groups = await Group.findAll();
-    res.status(StatusCodes.OK).send({ groups: groups });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const createGroup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id, name, permission } = req.body;
-    const availableGroup: GroupInterface = await Group.findOne({
-      where: { id },
-    });
-
-    if (availableGroup) {
-      res.status(StatusCodes.OK).send('Group Exist!');
+  },
+  getAllGroups: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groups = await GroupService.getAllGroups();
+      res
+        .status(StatusCodes.OK)
+        .json({ groups, msg: 'Successfully retrieved all groups' });
+    } catch (error: any) {
+      next(error);
     }
+  },
+  createGroup: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groupInfo = req.body;
+      const newGroup = await GroupService.createGroup(groupInfo);
 
-    const newGroup: GroupInterface = await Group.create({
-      id,
-      name,
-      permission,
-    });
-
-    if (!newGroup) {
-      res.status(StatusCodes.BAD_REQUEST).send('Unable to create new Group');
-    }
-
-    res.status(StatusCodes.OK).send({
-      message: `Create Successed ${newGroup.id} - ${newGroup.name}.`,
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const updateGroupById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-    const { name, permissions } = req.body;
-
-    await Group.update({ name, permissions }, { where: { id: id } })
-      .then((success: number) => {
-        return success
-          ? res
-              .status(StatusCodes.OK)
-              .send({ message: `Group${id} updated successfully!` })
-          : res
-              .status(StatusCodes.BAD_REQUEST)
-              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
-      })
-      .catch((error: any) => {
-        throw new Error(error.message);
+      res.status(StatusCodes.OK).json({
+        newGroup,
+        msg: `Successfully created new group`,
       });
-  } catch (error: any) {
-    next(error);
-  }
-};
+    } catch (error: any) {
+      next(error);
+    }
+  },
+  updateGroupById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const groupInfo = req.body;
+      const updatedGroup = await GroupService.updateGroup(id, groupInfo);
 
-export const deleteGroupById = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-    await UserGroup.destroy({ where: { GroupId: id } }).then(async () => {
-      await Group.destroy({ where: { id } }).then((success: number) => {
-        return success
-          ? res
-              .status(StatusCodes.OK)
-              .send({ message: `Group${id} deleted successfully!` })
-          : res
-              .status(StatusCodes.BAD_REQUEST)
-              .send({ error: success, Message: ReasonPhrases.BAD_REQUEST });
+      res
+        .status(StatusCodes.OK)
+        .send({ msg: 'Successfully updated group', updatedGroup });
+    } catch (error: any) {
+      next(error);
+    }
+  },
+  deleteGroupById: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      await GroupService.deleteGroupById(id);
+      
+      res.status(StatusCodes.OK).send({ msg: 'Group deleted successfully' });
+    } catch (error: any) {
+      next(error);
+    }
+  },
+  addUsersToGroup: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userIds, groupId } = req.body;
+      await GroupService.addUsersToGroup(userIds, groupId);
+
+      res.status(StatusCodes.CREATED).send({
+        msg: 'Successfully Added Users to Group',
       });
-    });
-  } catch (error: any) {
-    next(error);
-  }
-};
-
-export const addUsersToGroup = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userIds, groupId } = req.body;
-
-    const group = await Group.findOne({ where: { id: groupId } });
-    const users = await User.findAll(
-      { where: { id: { [Op.in]: userIds } } },
-      { atattributes: ['id', 'login', 'password', 'age', 'isDeleted'] },
-    );
-
-    if (!group || !users)
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .send(ReasonPhrases.BAD_REQUEST);
-
-    users.forEach(async (user: UserInterface) => {
-      await UserGroup.create({ UserId: user.id, GroupId: groupId });
-    });
-
-    res.status(StatusCodes.CREATED).send({
-      message: ReasonPhrases.CREATED,
-    });
-  } catch (error: any) {
-    next(error);
-  }
+    } catch (error: any) {
+      next(error);
+    }
+  },
 };

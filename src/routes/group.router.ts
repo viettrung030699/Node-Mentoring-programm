@@ -1,25 +1,26 @@
-import { groupSchema, userGroupSchema, validateSchema } from '../validations/validation';
 import {
-  getAllGroups,
-  getGroupById,
-  createGroup,
-  updateGroupById,
-  deleteGroupById,
-  addUsersToGroup,
-} from '../controllers';
+  groupSchema,
+  userGroupSchema,
+  validateSchema,
+} from '../validations/validation';
+import { GroupController } from '../controllers';
 
 const express = require('express');
 
 export const groupRouter = express.Router();
 
-groupRouter.get('/:id', getGroupById);
+groupRouter.get('/getAllGroups', GroupController.getAllGroups);
 
-groupRouter.get('/', getAllGroups);
+groupRouter.get('/:id', GroupController.getGroupById);
 
-groupRouter.post('/', validateSchema(groupSchema), createGroup);
+groupRouter.post('/create', validateSchema(groupSchema), GroupController.createGroup);
 
-groupRouter.put('/:id', validateSchema(groupSchema), updateGroupById);
+groupRouter.put('/:id', validateSchema(groupSchema), GroupController.updateGroupById);
 
-groupRouter.post('/addUsersToGroup', validateSchema(userGroupSchema), addUsersToGroup);
+groupRouter.post(
+  '/addUsersToGroup',
+  validateSchema(userGroupSchema),
+  GroupController.addUsersToGroup,
+);
 
-groupRouter.delete('/:id', deleteGroupById);
+groupRouter.delete('/:id', GroupController.deleteGroupById);

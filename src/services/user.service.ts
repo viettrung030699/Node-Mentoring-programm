@@ -5,7 +5,6 @@ import { encryptPassword, verifyPassword } from '../utils/utils';
 import {
   ERROR_400_MESSAGE,
   ERROR_400_USERS_NOT_FOUND,
-  ERROR_400_USER_DELETED_FAILED,
   ERROR_400_USER_EXISTED,
   ERROR_400_USER_NOT_FOUND,
 } from '../constants';

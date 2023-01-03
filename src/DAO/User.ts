@@ -24,6 +24,13 @@ export const User = {
 
     return user;
   },
+  getUsersById: async (userIds: any) => {
+    const users = await UserModel.findAll(
+      { where: { id: { [Op.in]: userIds } } },
+      { atattributes: ['id', 'login', 'password', 'age', 'isDeleted'] },
+    );
+    return users;
+  },
   getAllUsers: async () => {
     const users = await UserModel.findAll();
     return users;
